@@ -1,0 +1,22 @@
+﻿Zmiany do realizacji po CR:
+
+1. Wyciągnięcie do stałej nazwy importowanego pliku i poprawienie jego nazwy 
+2. Wydzielenie klasy ImportedObjectBaseClass i ImportedObject do osobnych plików w katalogu ImportModels
+3. Usunięcie z klasy ImportedObject właściwości Name, która pokrywa się z właściwością Name z klasy bazowej: ImportedObjectBaseClass
+4. Zmiana w klasie ImportedObject pól Schema, ParentName, NumberOfChildren na właściwości, dodać konstruktor do ustawiania wartości właściwości
+5. Zmiana w klasie ImportedObject właściwość IsNullable z typu string na typ bool oraz NumberOfChildren z double na int, dodać metodę do inkrementowania wartości właściwości NumberOfChildren 
+6. Zmiana logiki przetwarzania pliku csv:
+	6.1	Porzucenie realizacji zadania z wykorzystaniem klasy DataReader - podejście do realizacji zgodnie z Single Responsibility Principle - każda klasa powinna posiadać tylko 1 odpowiedzialność
+	6.2 Podzileić logikę przetwarzania pliku csv na serwisy:
+		# Dodać klasę serwisową ReadFileContentService do odczytania zawartości pliku csv 
+			@ Przy tworzeniu obiektu klasy StreamReader dodać dyrektywę using pozwalająca na automatyczne wywołanie metody Dispose (zamknięcie pliku, zwolnienie zasobów) - StreamReader implementuje interfejs IDisposable
+			@ Utworzenie obiektu typu FileStream i zdefiniować parametry sterujące FileMode, FileAccess. FileShare 
+		# Dodać klasę serwisową CreateImportObjectListService do uwtorzenia listy obiektów ImportedObject
+			@ Zmiana obsługi pętli na wywołania LINQ
+	6.3 Dodanie klasy PrinterService do wyświetlenia wyników w konsoli, podzielić wyświetlania na osobne metody dla kolumn, tabel, bazy danych
+	6.4 Dla serwisów przygotować interfes i zapisać go w folderze Abstractions, zaimplementować interfejsy w klasach serwisowych
+7. Dodanie interfesów ICommand i ICommandHandler oraz ich implementacje FileCommand i FileCommandHandler zgodnie z zasadą Command Query Responsibility Segregation, wydawaj aplikacji polecenia w postaci komend i zapytań
+8. Usunięcie niepotrzebnych dyrektrywy using z plików
+9. Usunięcie plik DataReader.cs
+10. Skonfigurowanie biblioteki log4net do zapisywania historii występowanych wyjątków w aplikacji
+11. Dodanie projektu testów jednostkowych w celu sprawdzenia przygotowanych funkcjonalności - opcjonalnie
